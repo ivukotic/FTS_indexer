@@ -47,13 +47,17 @@ RUN pip3 --no-cache-dir install elasticsearch requests stomp.py
 
 ADD tools.py /.
 ADD siteMapping.py /.
-ADD NetworkLatencyCollector.py /.
+ADD FTS_collector.py /.
+ADD startCollector.sh /.
+
+RUN chmod +x startCollector.sh
 
 # setup supervisord
-RUN mkdir -p /var/log/supervisor
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+#RUN mkdir -p /var/log/supervisor
+#COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # build info
 RUN echo "Timestamp:" `date --utc` | tee /image-build-info.txt
 
-CMD ["/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
+#CMD ["/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
+CMD ["startCollector.sh"]
