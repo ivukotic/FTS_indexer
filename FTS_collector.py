@@ -14,7 +14,10 @@ import stomp
 import tools
 import siteMapping
 
-tools.TOPIC = "/topic/perfsonar.raw.histogram-owdelay"
+topic = "/topic/transfer.fts_monitoring_state"
+# topic = "/topic/transfer.fts_monitoring_start"
+# topic = "/topic/transfer.fts_monitoring_complete"
+
 siteMapping.reload()
 
 
@@ -48,20 +51,21 @@ def connect_to_MQ(reset=False):
     print("connecting to MQ")
     tools.connection = None
 
-    addresses = socket.getaddrinfo('clever-turkey.rmq.cloudamqp.com', 61614)
-    ip = addresses[0][4][0]
-    host_and_ports = [(ip, 61614)]
-    print(host_and_ports)
+    addresses = socket.getaddrinfo(MQ_parameters['MQ_HOST'], 61123)
+    ips = set()
+    for a in addresses:
+        ips.add(a[4][0])
+    allhosts = []
+    for ip in ips:
+        allhosts.append([(ip, 61513)])
 
-    tools.connection = stomp.Connection(
-        host_and_ports=host_and_ports,
-        use_ssl=True,
-        vhost=RMQ_parameters['RMQ_VHOST']
-    )
-    tools.connection.set_listener('MyConsumer', MyListener())
-    tools.connection.start()
-    tools.connection.connect(RMQ_parameters['RMQ_USER'], RMQ_parameters['RMQ_PASS'], wait=True)
-    tools.connection.subscribe(destination=tools.TOPIC, ack='auto', id="1", headers={})
+    for host in allhosts:
+        conn = stomp.Connection(host, user=MQ_parameters['MQ_USER'], passcode=MQ_parameters['MQ_PASS'])
+        conn.set_listener('MyConsumer', MyListener())
+        conn.start()
+        conn.connect()
+        conn.subscribe(destination=topic, ack='auto', id="1", headers={})
+        conns.append(conn)
     return
 
 
@@ -141,7 +145,7 @@ def eventCreator():
                 aLotOfData = []
 
 
-RMQ_parameters = tools.get_RMQ_connection_parameters()
+MQ_parameters = tools.get_MQ_connection_parameters()
 
 q = queue.Queue()
 # start eventCreator threads

@@ -54,9 +54,9 @@ def bulk_index(data, es_conn=None, thread_name=''):
     return success
 
 
-def get_RMQ_connection_parameters():
+def get_MQ_connection_parameters():
     """ read vhost, user, pass from the environment """
-    ret = {'RMQ_VHOST': '', 'RMQ_USER': '', 'RMQ_PASS': ''}
+    ret = {'MQ_HOST': '', 'MQ_USER': '', 'MQ_PASS': ''}
     for var in ret:
         val = os.environ[var]
         if val:
@@ -70,5 +70,4 @@ def get_RMQ_connection_parameters():
 # MQ connection - here to make it global
 connection = None
 
-TOPIC = 'no topic defined.'
-index_prefix = 'network_weather-'
+index_prefix = 'fts-'

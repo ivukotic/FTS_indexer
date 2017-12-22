@@ -1,2 +1,2 @@
 #/bin/bash
-NetworkLatencyCollector.py
+python3 FTS_Collector.py
