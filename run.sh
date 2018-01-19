@@ -1,2 +1,2 @@
 #/bin/bash
-python3 FTS_collector.py
+python3.6 FTS_collector.py
