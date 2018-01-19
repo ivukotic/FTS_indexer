@@ -1,12 +1,12 @@
 # FTS_indexer
 Collects data from FTS AMQ and sends to Elasticsearch
 
-container requires environment variables:
+requires environment variables:
 
 Mandatory:
 MQ_HOST = 'netmon-mb.cern.ch'
-MQ_USER = 'psatlflume'
-MQ_PASS ''
+MQ_USER = 'XXXXX'
+MQ_PASS = 'XXXXX'
 
 
 Optional:
