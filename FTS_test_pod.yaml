@@ -19,11 +19,3 @@ spec:
           secretKeyRef:
             name: mq-auth
             key: mq_pass
-    volumeMounts:
-    - name: mq-secret
-      mountPath: "/tmp/mq-secret"
-      readOnly: true
-  volumes:
-  - name: mq-secret
-    secret:
-      secretName: mq-secret
