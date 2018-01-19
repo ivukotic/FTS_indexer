@@ -1,4 +1,4 @@
-curl -XPOST 'http://atlas-kibana.mwt2.org:9200/_template/perfsonar' -d '{
+curl -XPOST 'http://atlas-kibana.mwt2.org:9200/_template/fts' -d '{
   "template" : "network_weather-*",
   "mappings": {
       "throughput": {
