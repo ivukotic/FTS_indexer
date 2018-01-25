@@ -10,8 +10,8 @@ import json
 from datetime import datetime
 import math
 
-import stomp
 import tools
+from AMQ_Listener import ActiveMqListener
 import siteMapping
 
 topic = "/topic/transfer.fts_monitoring_state"
@@ -19,62 +19,33 @@ topic = "/topic/transfer.fts_monitoring_state"
 # topic = "/topic/transfer.fts_monitoring_complete"
 
 siteMapping.reload()
+MQ_parameters = tools.get_MQ_connection_parameters()
+
+q = queue.Queue()
 
 
-class MyListener(object):
-
-    def on_message(self, headers, message):
-        q.put(message)
-
-    def on_error(self, headers, message):
-        print('received an error %s' % message)
-
-    def on_heartbeat_timeout(self):
-        print('MQ - lost heartbeat. Needs a reconnect!')
-        connect_to_MQ(reset=True)
-
-    def on_disconnected(self):
-        print('MQ - no connection. Needs a reconnect!')
-        connect_to_MQ(reset=True)
+def inserter(message):
+    q.put(message)
 
 
-def connect_to_MQ(reset=False):
+print("starting ...")
+PORT = 61113
 
-    if tools.connection is not None:
-        if reset and tools.connection.is_connected():
-            tools.connection.disconnect()
-            tools.connection = None
+ips = set()
+for a in socket.getaddrinfo(MQ_parameters['MQ_HOST'], PORT):
+    ips.add(a[4][0])
 
-        if tools.connection.is_connected():
-            return
-
-    print("connecting to MQ")
-    tools.connection = None
-
-    addresses = socket.getaddrinfo(MQ_parameters['MQ_HOST'], 61123)
-    ips = set()
-    for a in addresses:
-        ips.add(a[4][0])
-    allhosts = []
-    for ip in ips:
-        allhosts.append([(ip, 61513)])
-
-    for host in allhosts:
-        conn = stomp.Connection(host, user=MQ_parameters['MQ_USER'], passcode=MQ_parameters['MQ_PASS'])
-        conn.set_listener('MyConsumer', MyListener())
-        conn.start()
-        conn.connect()
-        conn.subscribe(destination=topic, ack='auto', id="1", headers={})
-        conns.append(conn)
-    return
+for ip in ips:
+    ActiveMqListener(ip, PORT, topic, inserter, MQ_parameters['MQ_USER'], MQ_parameters['MQ_PASS'])
 
 
 def eventCreator():
     aLotOfData = []
     es_conn = tools.get_es_connection()
     while True:
-        d = q.get()
-        m = json.loads(d)
+        m = q.get()
+        print(m)
+        continue
         data = {
             '_type': 'latency'
         }
@@ -145,9 +116,7 @@ def eventCreator():
                 aLotOfData = []
 
 
-MQ_parameters = tools.get_MQ_connection_parameters()
 
-q = queue.Queue()
 # start eventCreator threads
 for i in range(1):
     t = Thread(target=eventCreator)
@@ -156,6 +125,5 @@ for i in range(1):
 
 
 while True:
-    connect_to_MQ()
     time.sleep(55)
     print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "qsize:", q.qsize())
