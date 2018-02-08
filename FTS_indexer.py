@@ -14,9 +14,9 @@ import tools
 from AMQ_Listener import ActiveMqListener
 import siteMapping
 
-topic = "/topic/transfer.fts_monitoring_state"
+# topic = "/topic/transfer.fts_monitoring_state"
 # topic = "/topic/transfer.fts_monitoring_start"
-# topic = "/topic/transfer.fts_monitoring_complete"
+topic = "/topic/transfer.fts_monitoring_complete"
 
 siteMapping.reload()
 MQ_parameters = tools.get_MQ_connection_parameters()
@@ -45,71 +45,39 @@ def eventCreator():
     while True:
         m = q.get()
         print(m)
-        continue
+        dati = datetime.utcfromtimestamp(float(m['tr_timestamp_start']))
         data = {
-            '_type': 'latency'
+            '_type': 'docs',
+            '_id': m['tr_id'],
+            '_index': 'tfts_' + str(dati.year) + "-" + str(dati.month).zfill(2) + "-" + str(dati.day).zfill(2),
+            'endpnt': m['endpnt'],
+            'vo': m['vo'],
+            "src_hostname":  m['src_hostname'],
+            "dst_hostname":  m['dst_hostname'],
+            "f_size":  m['f_size'],
+            "t_error_code":  m['t_error_code'],
+            "retry": m['retry'],
+            "timestamp_tr_st": m['timestamp_tr_st'],
+            "timestamp_tr_comp": m['timestamp_tr_comp'],
+            "timestamp_chk_src_st": m['timestamp_chk_src_st'],
+            "timestamp_chk_src_ended": m['timestamp_chk_src_ended'],
+            "timestamp_checksum_dest_st": m['timestamp_checksum_dest_st'],
+            "timestamp_checksum_dest_ended": m['timestamp_checksum_dest_ended'],
+            "tr_timestamp_start": m['tr_timestamp_start'],
+            "tr_timestamp_complete": m['tr_timestamp_complete']
         }
 
-        source = m['meta']['source']
-        destination = m['meta']['destination']
-        data['MA'] = m['meta']['measurement_agent']
-        data['src'] = source
-        data['dest'] = destination
-        data['src_host'] = m['meta']['input_source']
-        data['dest_host'] = m['meta']['input_destination']
-        data['ipv6'] = False
-        if ':' in source or ':' in destination:
-            data['ipv6'] = True
-        so = siteMapping.getPS(source)
-        de = siteMapping.getPS(destination)
-        if so is not None:
-            data['srcSite'] = so[0]
-            data['srcVO'] = so[1]
-        if de is not None:
-            data['destSite'] = de[0]
-            data['destVO'] = de[1]
-        data['srcProduction'] = siteMapping.isProductionLatency(source)
-        data['destProduction'] = siteMapping.isProductionLatency(destination)
-        su = m['datapoints']
-        for ts, th in su.items():
-            dati = datetime.utcfromtimestamp(float(ts))
-            data['_index'] = tools.index_prefix + str(dati.year) + "." + str(dati.month) + "." + str(dati.day)
-            data['timestamp'] = int(float(ts) * 1000)
-            th_fl = dict((float(k), v) for (k, v) in th.items())
+        # so = siteMapping.getPS(source)
+        # de = siteMapping.getPS(destination)
+        # if so is not None:
+        #     data['srcSite'] = so[0]
+        # if de is not None:
+        #     data['destSite'] = de[0]
 
-            # mean
-            samples = sum([v for k, v in th_fl.items()])
-            th_mean = sum(k * v for k, v in th_fl.items()) / samples
-            data['delay_mean'] = th_mean
-            # std dev
-            data['delay_sd'] = math.sqrt(sum((k - th_mean) ** 2 * v for k, v in th_fl.items()) / samples)
-            # median
-            csum = 0
-            ordered_th = [(k, v) for k, v in sorted(th_fl.items())]
-            midpoint = samples // 2
-            if samples % 2 == 0:  # even number of samples
-                for index, entry in enumerate(ordered_th):
-                    csum += entry[1]
-                    if csum > midpoint + 1:
-                        data['delay_median'] = entry[0]
-                        break
-                    elif csum == midpoint:
-                        data['delay_median'] = entry[0] + ordered_th[index + 1][0] / 2
-                        break
-                    elif csum == midpoint + 1 and index == 0:
-                        data['delay_median'] = entry[0]
-                        break
-                    elif csum == midpoint + 1 and index > 0:
-                        data['delay_median'] = entry[0] + ordered_th[index - 1][0] / 2
-                        break
-            else:  # odd number of samples
-                for index, entry in enumerate(ordered_th):
-                    csum += entry[1]
-                    if csum >= midpoint + 1:
-                        data['delay_median'] = entry[0]
-                        break
-            aLotOfData.append(copy.copy(data))
+        aLotOfData.append(copy.copy(data))
+
         q.task_done()
+
         if len(aLotOfData) > 500:
             succ = tools.bulk_index(aLotOfData, es_conn=es_conn, thread_name=threading.current_thread().name)
             if succ is True:
