@@ -36,6 +36,7 @@ for a in socket.getaddrinfo(MQ_parameters['MQ_HOST'], PORT):
     ips.add(a[4][0])
 
 for ip in ips:
+    if ip.count(':') > 0: continue
     ActiveMqListener(ip, PORT, topic, inserter, MQ_parameters['MQ_USER'], MQ_parameters['MQ_PASS'])
 
 
