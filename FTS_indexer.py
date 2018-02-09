@@ -46,7 +46,7 @@ def eventCreator():
     es_conn = tools.get_es_connection()
     while True:
         m = q.get()
-        print(m)
+        # print(m)
         dati = datetime.utcfromtimestamp(float(m['tr_timestamp_start']) / 1000)
         data = {
             '_type': 'docs',
