@@ -36,7 +36,8 @@ for a in socket.getaddrinfo(MQ_parameters['MQ_HOST'], PORT):
     ips.add(a[4][0])
 
 for ip in ips:
-    if ip.count(':') > 0: continue
+    if ip.count(':') > 0:
+        continue
     ActiveMqListener(ip, PORT, topic, inserter, MQ_parameters['MQ_USER'], MQ_parameters['MQ_PASS'])
 
 
@@ -46,7 +47,7 @@ def eventCreator():
     while True:
         m = q.get()
         print(m)
-        dati = datetime.utcfromtimestamp(float(m['tr_timestamp_start']))
+        dati = datetime.utcfromtimestamp(float(m['tr_timestamp_start']) / 1000)
         data = {
             '_type': 'docs',
             '_id': m['tr_id'],
