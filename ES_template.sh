@@ -20,14 +20,14 @@ curl -XPOST 'http://atlas-kibana-dev.mwt2.org:9200/_template/tfts' -d '{
                 "t_error_code" : { "type" : "integer" },
                 "retry" : { "type" : "integer" },
 
-                "timestamp_tr_st" :{ "type" : "date" },
-                "timestamp_tr_comp" :{ "type" : "date" },
+                "processing_start" :{ "type" : "date" },
+                "processing_stop" :{ "type" : "date" },
                 "timestamp_chk_src_st" :{ "type" : "date" },
                 "timestamp_chk_src_ended" :{ "type" : "date" },
-                "timestamp_checksum_dest_st" :{ "type" : "date" },
-                "timestamp_checksum_dest_ended" :{ "type" : "date" },
-                "tr_timestamp_start" :{ "type" : "date" },
-                "tr_timestamp_complete" :{ "type" : "date" }
+                "timestamp_chk_dest_st" :{ "type" : "date" },
+                "timestamp_chk_dest_ended" :{ "type" : "date" },
+                "transfer_start" :{ "type" : "date" },
+                "transfer_stop" :{ "type" : "date" }
             }
         }
     }

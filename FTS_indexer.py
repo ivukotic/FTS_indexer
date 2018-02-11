@@ -57,17 +57,22 @@ def eventCreator():
             "src_hostname":  m['src_hostname'],
             "dst_hostname":  m['dst_hostname'],
             "f_size":  m['f_size'],
-            "t_error_code":  m['t_error_code'],
             "retry": m['retry'],
-            "timestamp_tr_st": m['timestamp_tr_st'],
-            "timestamp_tr_comp": m['timestamp_tr_comp'],
-            "timestamp_chk_src_st": m['timestamp_chk_src_st'],
-            "timestamp_chk_src_ended": m['timestamp_chk_src_ended'],
-            "timestamp_checksum_dest_st": m['timestamp_checksum_dest_st'],
-            "timestamp_checksum_dest_ended": m['timestamp_checksum_dest_ended'],
-            "tr_timestamp_start": m['tr_timestamp_start'],
-            "tr_timestamp_complete": m['tr_timestamp_complete']
+            "processing_start": m['timestamp_tr_st'],
+            "processing_stop": m['timestamp_tr_comp'],
+            "transfer_start": m['tr_timestamp_start'],
+            "transfer_stop": m['tr_timestamp_complete']
         }
+        if m['timestamp_chk_src_st'] > 0:
+            data['timestamp_chk_src_st'] = m['timestamp_chk_src_st']
+            data['timestamp_chk_src_ended'] = m['timestamp_chk_src_ended']
+
+        if m['timestamp_checksum_dest_st'] > 0:
+            data['timestamp_chk_dest_st'] = m['timestamp_checksum_dest_st']
+            data['timestamp_chk_dest_ended'] = m['timestamp_checksum_dest_ended']
+
+        if m['t_error_code']:
+            data['t_error_code'] = m['t_error_code']
 
         # so = siteMapping.getPS(source)
         # de = siteMapping.getPS(destination)
