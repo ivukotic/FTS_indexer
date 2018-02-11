@@ -6,19 +6,17 @@ import time
 import threading
 from threading import Thread
 import copy
-import json
 from datetime import datetime
-import math
 
 import tools
 from AMQ_Listener import ActiveMqListener
-import siteMapping
+# import siteMapping
 
 # topic = "/topic/transfer.fts_monitoring_state"
 # topic = "/topic/transfer.fts_monitoring_start"
 topic = "/topic/transfer.fts_monitoring_complete"
 
-siteMapping.reload()
+# siteMapping.reload()
 MQ_parameters = tools.get_MQ_connection_parameters()
 
 q = queue.Queue()
