@@ -74,6 +74,16 @@ def eventCreator():
         if m['t_error_code']:
             data['t_error_code'] = m['t_error_code']
 
+        if 'filemetadata' in m:
+            md = m['filemetadata']
+            if ['src_type'] in md:
+                data['src_type'] = md['src_type']
+            if ['dst_type'] in md:
+                data['dst_type'] = md['dst_type']
+            if ['request_id'] in md:
+                data['request_id'] = md['request_id']
+            if ['activity'] in md:
+                data['activity'] = md['activity']
         # so = siteMapping.getPS(source)
         # de = siteMapping.getPS(destination)
         # if so is not None:
