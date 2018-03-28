@@ -59,18 +59,30 @@ def eventCreator():
             "processing_start": m['timestamp_tr_st'],
             "processing_stop": m['timestamp_tr_comp'],
             "transfer_start": m['tr_timestamp_start'],
-            "transfer_stop": m['tr_timestamp_complete']
+            "transfer_stop": m['tr_timestamp_complete'],
+            "final_transfer_state": m['t_final_transfer_state']
         }
         if m['timestamp_chk_src_st'] > 0:
             data['timestamp_chk_src_st'] = m['timestamp_chk_src_st']
             data['timestamp_chk_src_ended'] = m['timestamp_chk_src_ended']
 
         if m['timestamp_checksum_dest_st'] > 0:
-            data['timestamp_chk_dest_st'] = m['timestamp_checksum_dest_st']
-            data['timestamp_chk_dest_ended'] = m['timestamp_checksum_dest_ended']
+            data['timestamp_chk_dst_st'] = m['timestamp_checksum_dest_st']
+            data['timestamp_chk_dst_ended'] = m['timestamp_checksum_dest_ended']
 
         if m['t_error_code']:
-            data['t_error_code'] = m['t_error_code']
+            data['error_code'] = m['t_error_code']
+
+        if m['t_failure_phase'] and m['t_failure_phase']!='':
+            data['failure_phase'] = m['t_failure_phase']
+        
+        if m['tr_error_category'] and m['tr_error_category']!='':
+            data['error_category'] = m['tr_error_category']
+
+
+        if m['t__error_message'] and m['t__error_message']!='':
+            data['error_message'] = m['t__error_message']
+
 
         if 'filemetadata' in m:
             md = m['filemetadata']
@@ -78,16 +90,20 @@ def eventCreator():
                 data['src_type'] = md['src_type']
             if ['dst_type'] in md:
                 data['dst_type'] = md['dst_type']
+            if ['src_rse'] in md:
+                data['src_rse'] = md['src_rse']
+            if ['dst_rse'] in md:
+                data['dst_rse'] = md['dst_rse']
             if ['request_id'] in md:
                 data['request_id'] = md['request_id']
             if ['activity'] in md:
                 data['activity'] = md['activity']
-        # so = siteMapping.getPS(source)
-        # de = siteMapping.getPS(destination)
-        # if so is not None:
-        #     data['srcSite'] = so[0]
-        # if de is not None:
-        #     data['destSite'] = de[0]
+            so = siteMapping.getPS(source)
+            de = siteMapping.getPS(destination)
+            if so is not None:
+                data['src_site'] = so[0]
+            if de is not None:
+                data['dst_site'] = de[0]
 
         aLotOfData.append(copy.copy(data))
 
