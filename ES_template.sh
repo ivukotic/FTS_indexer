@@ -21,6 +21,7 @@ curl -XPOST 'http://atlas-kibana-dev.mwt2.org:9200/_template/tfts' -d '{
                 "error_code" : { "type" : "integer" },
                 "failure_phase" : { "type" : "keyword" },
                 "error_category" : { "type" : "keyword" },
+                "error_message" : { "type" : "text" },
                 "final_transfer_state" : { "type" : "keyword" },
                 "retry" : { "type" : "integer" },
                 "processing_start" :{ "type" : "date" },

@@ -16,7 +16,7 @@ from AMQ_Listener import ActiveMqListener
 # topic = "/topic/transfer.fts_monitoring_start"
 topic = "/topic/transfer.fts_monitoring_complete"
 
-# siteMapping.reload()
+siteMapping.reload()
 MQ_parameters = tools.get_MQ_connection_parameters()
 
 q = queue.Queue()
@@ -84,27 +84,26 @@ def eventCreator():
             data['error_message'] = m['t__error_message']
 
 
-        if 'filemetadata' in m:
-            md = m['filemetadata']
+        if 'file_metadata' in m:
+            md = m['file_metadata']
             if ['src_type'] in md:
                 data['src_type'] = md['src_type']
             if ['dst_type'] in md:
                 data['dst_type'] = md['dst_type']
             if ['src_rse'] in md:
                 data['src_rse'] = md['src_rse']
+                so = siteMapping.getPS( m['src_rse'] )
+                if so is not None:
+                    data['src_site'] = so[0]
             if ['dst_rse'] in md:
                 data['dst_rse'] = md['dst_rse']
+                de = siteMapping.getPS( m['dst_rse'] )
+                if de is not None:
+                    data['dst_site'] = de[0]
             if ['request_id'] in md:
                 data['request_id'] = md['request_id']
             if ['activity'] in md:
                 data['activity'] = md['activity']
-            so = siteMapping.getPS(source)
-            de = siteMapping.getPS(destination)
-            if so is not None:
-                data['src_site'] = so[0]
-            if de is not None:
-                data['dst_site'] = de[0]
-
         aLotOfData.append(copy.copy(data))
 
         q.task_done()
