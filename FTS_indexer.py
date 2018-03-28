@@ -10,7 +10,7 @@ from datetime import datetime
 
 import tools
 from AMQ_Listener import ActiveMqListener
-# import siteMapping
+import siteMapping
 
 # topic = "/topic/transfer.fts_monitoring_state"
 # topic = "/topic/transfer.fts_monitoring_start"
