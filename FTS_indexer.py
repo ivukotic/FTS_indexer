@@ -84,18 +84,18 @@ def eventCreator():
             data['error_message'] = m['t__error_message']
 
 
-        if 'file_metadata' in m:
+        if 'file_metadata' in m and m['file_metadata']!=None::
             md = m['file_metadata']
-            if 'src_type' in md:
+            if 'src_type' in md and md['src_type']!=None:
                 data['src_type'] = md['src_type']
-            if 'dst_type' in md:
+            if 'dst_type' in md and md['dst_type']!=None:
                 data['dst_type'] = md['dst_type']
-            if 'src_rse' in md:
+            if 'src_rse' in md and md['src_rse']!=None:
                 data['src_rse'] = md['src_rse']
                 so = siteMapping.get_site_from_ddm( m['src_rse'] )
                 if so is not None:
                     data['src_site'] = so[0]
-            if 'dst_rse' in md:
+            if 'dst_rse' in md and md['dst_rse']!=None:
                 data['dst_rse'] = md['dst_rse']
                 de = siteMapping.get_site_from_ddm( m['dst_rse'] )
                 if de is not None:
