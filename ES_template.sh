@@ -39,6 +39,8 @@ curl -XPOST 'http://atlas-kibana-dev.mwt2.org:9200/_template/tfts' -d '{
                         "dst_type" : { "type" : "keyword" },
                         "src_rse" : { "type" : "keyword" },
                         "dst_rse" : { "type" : "keyword" },
+                        "src_site" : { "type" : "keyword" },
+                        "dst_site" : { "type" : "keyword" },
                         "request_id" : { "type" : "keyword" }
                     }
                 }
