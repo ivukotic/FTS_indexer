@@ -92,12 +92,12 @@ def eventCreator():
                 data['dst_type'] = md['dst_type']
             if 'src_rse' in md and md['src_rse']!=None:
                 data['src_rse'] = md['src_rse']
-                so = siteMapping.get_site_from_ddm( m['src_rse'] )
+                so = siteMapping.get_site_from_ddm( md['src_rse'] )
                 if so is not None:
                     data['src_site'] = so[0]
             if 'dst_rse' in md and md['dst_rse']!=None:
                 data['dst_rse'] = md['dst_rse']
-                de = siteMapping.get_site_from_ddm( m['dst_rse'] )
+                de = siteMapping.get_site_from_ddm( md['dst_rse'] )
                 if de is not None:
                     data['dst_site'] = de[0]
             if 'request_id' in md:
