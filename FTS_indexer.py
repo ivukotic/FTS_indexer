@@ -86,24 +86,25 @@ def eventCreator():
 
         if 'file_metadata' in m and m['file_metadata']!=None:
             md = m['file_metadata']
+            data['metadata']={}
             if 'src_type' in md and md['src_type']!=None:
-                data['src_type'] = md['src_type']
+                data['metadata']['src_type'] = md['src_type']
             if 'dst_type' in md and md['dst_type']!=None:
-                data['dst_type'] = md['dst_type']
+                data['metadata']['dst_type'] = md['dst_type']
             if 'src_rse' in md and md['src_rse']!=None:
-                data['src_rse'] = md['src_rse']
+                data['metadata']['src_rse'] = md['src_rse']
                 so = siteMapping.get_site_from_ddm( md['src_rse'] )
                 if so is not None:
-                    data['src_site'] = so[0]
+                    data['metadata']['src_site'] = so[0]
             if 'dst_rse' in md and md['dst_rse']!=None:
-                data['dst_rse'] = md['dst_rse']
+                data['metadata']['dst_rse'] = md['dst_rse']
                 de = siteMapping.get_site_from_ddm( md['dst_rse'] )
                 if de is not None:
-                    data['dst_site'] = de[0]
+                    data['metadata']['dst_site'] = de[0]
             if 'request_id' in md:
-                data['request_id'] = md['request_id']
+                data['metadata']['request_id'] = md['request_id']
             if 'activity' in md:
-                data['activity'] = md['activity']
+                data['metadata']['activity'] = md['activity']
         aLotOfData.append(copy.copy(data))
 
         q.task_done()
