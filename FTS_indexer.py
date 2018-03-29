@@ -84,7 +84,7 @@ def eventCreator():
             data['error_message'] = m['t__error_message']
 
 
-        if 'file_metadata' in m and m['file_metadata']!=None::
+        if 'file_metadata' in m and m['file_metadata']!=None:
             md = m['file_metadata']
             if 'src_type' in md and md['src_type']!=None:
                 data['src_type'] = md['src_type']
