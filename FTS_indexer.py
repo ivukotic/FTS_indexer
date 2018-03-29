@@ -49,7 +49,7 @@ def eventCreator():
         data = {
             '_type': 'docs',
             '_id': m['tr_id'],
-            '_index': 'tfts_' + str(dati.year) + "-" + str(dati.month).zfill(2) + "-" + str(dati.day).zfill(2),
+            '_index': 'fts_' + str(dati.year) + "-" + str(dati.month).zfill(2) + "-" + str(dati.day).zfill(2),
             'endpnt': m['endpnt'],
             'vo': m['vo'],
             "src_hostname":  m['src_hostname'],

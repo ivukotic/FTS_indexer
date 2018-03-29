@@ -1,5 +1,5 @@
-curl -XPOST 'http://atlas-kibana-dev.mwt2.org:9200/_template/tfts' -d '{
-    "index_patterns" : "tfts*",
+curl -XPOST 'http://atlas-kibana-dev.mwt2.org:9200/_template/fts' -d '{
+    "index_patterns" : "fts*",
     "settings" : {
         "number_of_shards" : 5,
         "number_of_replicas" : 0
