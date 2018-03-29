@@ -95,12 +95,12 @@ def eventCreator():
                 data['metadata']['src_rse'] = md['src_rse']
                 so = siteMapping.get_site_from_ddm( md['src_rse'] )
                 if so is not None:
-                    data['metadata']['src_site'] = so[0]
+                    data['metadata']['src_site'] = so
             if 'dst_rse' in md and md['dst_rse']!=None:
                 data['metadata']['dst_rse'] = md['dst_rse']
                 de = siteMapping.get_site_from_ddm( md['dst_rse'] )
                 if de is not None:
-                    data['metadata']['dst_site'] = de[0]
+                    data['metadata']['dst_site'] = de
             if 'request_id' in md:
                 data['metadata']['request_id'] = md['request_id']
             if 'activity' in md:
