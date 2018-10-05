@@ -85,6 +85,13 @@ def eventCreator():
         if 'file_metadata' in m and m['file_metadata'] != None and not isinstance(m['file_metadata'], int):
             md = m['file_metadata']
             data['metadata'] = {}
+
+            if 'name' in md and md['name'] != None:
+                data['metadata']['name'] = md['name']
+
+            if 'scope' in md and md['scope'] != None:
+                data['metadata']['scope'] = md['scope']
+
             if 'src_type' in md and md['src_type'] != None:
                 data['metadata']['src_type'] = md['src_type']
             if 'dst_type' in md and md['dst_type'] != None:
