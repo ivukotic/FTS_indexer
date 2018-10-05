@@ -13,4 +13,4 @@ Optional:
 * ES_PASS
 * ES_HOST
 
-NB: for ATLAS Analytics this collector runs at UofC k8s cluster. It is started by regular "containers" scripts.
+NB: for ATLAS Analytics this collector runs at UofC k8s cluster in aaas namespace. It is started by regular "containers" scripts as a deployment.
