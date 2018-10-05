@@ -73,32 +73,30 @@ def eventCreator():
         if m['t_error_code']:
             data['error_code'] = m['t_error_code']
 
-        if m['t_failure_phase'] and m['t_failure_phase']!='':
+        if m['t_failure_phase'] and m['t_failure_phase'] != '':
             data['failure_phase'] = m['t_failure_phase']
-        
-        if m['tr_error_category'] and m['tr_error_category']!='':
+
+        if m['tr_error_category'] and m['tr_error_category'] != '':
             data['error_category'] = m['tr_error_category']
 
-
-        if m['t__error_message'] and m['t__error_message']!='':
+        if m['t__error_message'] and m['t__error_message'] != '':
             data['error_message'] = m['t__error_message']
 
-
-        if 'file_metadata' in m and m['file_metadata']!=None:
+        if 'file_metadata' in m and m['file_metadata'] != None and not isinstance(m['file_metadata'], int):
             md = m['file_metadata']
-            data['metadata']={}
-            if 'src_type' in md and md['src_type']!=None:
+            data['metadata'] = {}
+            if 'src_type' in md and md['src_type'] != None:
                 data['metadata']['src_type'] = md['src_type']
-            if 'dst_type' in md and md['dst_type']!=None:
+            if 'dst_type' in md and md['dst_type'] != None:
                 data['metadata']['dst_type'] = md['dst_type']
-            if 'src_rse' in md and md['src_rse']!=None:
+            if 'src_rse' in md and md['src_rse'] != None:
                 data['metadata']['src_rse'] = md['src_rse']
-                so = siteMapping.get_site_from_ddm( md['src_rse'] )
+                so = siteMapping.get_site_from_ddm(md['src_rse'])
                 if so is not None:
                     data['metadata']['src_site'] = so
-            if 'dst_rse' in md and md['dst_rse']!=None:
+            if 'dst_rse' in md and md['dst_rse'] != None:
                 data['metadata']['dst_rse'] = md['dst_rse']
-                de = siteMapping.get_site_from_ddm( md['dst_rse'] )
+                de = siteMapping.get_site_from_ddm(md['dst_rse'])
                 if de is not None:
                     data['metadata']['dst_site'] = de
             if 'request_id' in md:
