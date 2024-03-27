@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fts-indexer
+  namespace: aaas
+  labels:
+    app: fts-indexer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fts-indexer
+  template:
+    metadata:
+      labels:
+        app: fts-indexer
+    spec:
+      containers:
+        - name: fts-indexer
+          image: ivukotic/fts_indexer:latest
+          args: ["/run.sh"]
+          env:
+            - name: MQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mq-auth-fts
+                  key: mq_user
+            - name: MQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mq-auth-fts
+                  key: mq_pass
+            - name: MQ_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: mq-auth-fts
+                  key: mq_host
+            - name: ES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: es-auth-fts
+                  key: es_user
+            - name: ES_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: es-auth-fts
+                  key: es_pass
+            - name: ES_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: es-auth-fts
+                  key: es_host
