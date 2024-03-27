@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fts-indexer
-  namespace: aaas
+  namespace: collectors
   labels:
     app: fts-indexer
 spec:
@@ -23,30 +23,37 @@ spec:
             - name: MQ_USER
               valueFrom:
                 secretKeyRef:
-                  name: mq-auth-fts
+                  name: fts
                   key: mq_user
             - name: MQ_PASS
               valueFrom:
                 secretKeyRef:
-                  name: mq-auth-fts
+                  name: fts
                   key: mq_pass
             - name: MQ_HOST
               valueFrom:
                 secretKeyRef:
-                  name: mq-auth-fts
+                  name: fts
                   key: mq_host
             - name: ES_USER
               valueFrom:
                 secretKeyRef:
-                  name: es-auth-fts
+                  name: fts
                   key: es_user
             - name: ES_PASS
               valueFrom:
                 secretKeyRef:
-                  name: es-auth-fts
+                  name: fts
                   key: es_pass
             - name: ES_HOST
               valueFrom:
                 secretKeyRef:
-                  name: es-auth-fts
+                  name: fts
                   key: es_host
+          resources:
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
