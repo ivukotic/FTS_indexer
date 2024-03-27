@@ -21,9 +21,9 @@ class ActiveMqListener(stomp.ConnectionListener):
         self.connection = stomp.Connection([(host, port)])
         self.connection.set_listener('MessagingListener', self)
         # self.connection.start()
-        self.connection.connect(self.user, self.password, wait=True)
         self.topic = topic
         self.callback = callback
+        self.connection.connect(self.user, self.password, wait=True)
 
     def on_connecting(self, host_and_port):
         log.debug(f'ActiveMQ connected socket to {str(host_and_port)}')
