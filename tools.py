@@ -14,8 +14,8 @@ def get_es_connection():
     try:
         if 'ES_USER' in os.environ and 'ES_PASS' in os.environ and 'ES_HOST' in os.environ:
             es_conn = Elasticsearch(
-                [{'host': os.environ['ES_HOST'], 'port': 9200}],
-                http_auth=(os.environ['ES_USER'], os.environ['ES_PASS'])
+                [{'host': os.environ['ES_HOST'], 'port': 9200, 'scheme': 'https'}],
+                basic_auth=(os.environ['ES_USER'], os.environ['ES_PASS'])
             )
         else:
             es_conn = Elasticsearch([{'host': 'atlas-kibana.mwt2.org', 'port': 9200}])
