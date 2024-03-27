@@ -47,7 +47,6 @@ def eventCreator():
         # print(m)
         dati = datetime.fromtimestamp(float(m['tr_timestamp_start']) / 1000, timezone.utc)
         data = {
-            '_type': 'docs',
             '_id': m['tr_id'],
             '_index': f'fts-{str(dati.year)}-{str(dati.month).zfill(2)}-{str(dati.day).zfill(2)}',
             'endpnt': m['endpnt'],

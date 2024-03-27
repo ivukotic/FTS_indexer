@@ -18,8 +18,8 @@ spec:
       containers:
         - name: fts-indexer
           image: ivukotic/fts_indexer:latest
-          command: [". /run.sh"]
-          # args: ["3600"]
+          command: ["python"]
+          args: ["FTS_indexer.py"]
           env:
             - name: MQ_USER
               valueFrom:
@@ -53,8 +53,8 @@ spec:
                   key: es_host
           resources:
             requests:
-              cpu: "1"
-              memory: "2Gi"
+              cpu: "500m"
+              memory: "256Mi"
             limits:
               cpu: "2"
-              memory: "4Gi"
+              memory: "2Gi"
