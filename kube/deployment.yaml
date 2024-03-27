@@ -18,7 +18,8 @@ spec:
       containers:
         - name: fts-indexer
           image: ivukotic/fts_indexer:latest
-          args: ["/run.sh"]
+          command: [". /run.sh"]
+          # args: ["3600"]
           env:
             - name: MQ_USER
               valueFrom:
