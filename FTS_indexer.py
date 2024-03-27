@@ -10,13 +10,13 @@ from datetime import datetime
 
 import tools
 from AMQ_Listener import ActiveMqListener
-import siteMapping
+# import siteMapping
 
 # topic = "/topic/transfer.fts_monitoring_state"
 # topic = "/topic/transfer.fts_monitoring_start"
 topic = "/topic/transfer.fts_monitoring_complete"
 
-siteMapping.reload()
+# siteMapping.reload()
 MQ_parameters = tools.get_MQ_connection_parameters()
 
 q = queue.Queue()
@@ -98,14 +98,14 @@ def eventCreator():
                 data['metadata']['dst_type'] = md['dst_type']
             if 'src_rse' in md and md['src_rse'] != None:
                 data['metadata']['src_rse'] = md['src_rse']
-                so = siteMapping.get_site_from_ddm(md['src_rse'])
-                if so is not None:
-                    data['metadata']['src_site'] = so
+                # so = siteMapping.get_site_from_ddm(md['src_rse'])
+                # if so is not None:
+                #     data['metadata']['src_site'] = so
             if 'dst_rse' in md and md['dst_rse'] != None:
                 data['metadata']['dst_rse'] = md['dst_rse']
-                de = siteMapping.get_site_from_ddm(md['dst_rse'])
-                if de is not None:
-                    data['metadata']['dst_site'] = de
+                # de = siteMapping.get_site_from_ddm(md['dst_rse'])
+                # if de is not None:
+                #     data['metadata']['dst_site'] = de
             if 'request_id' in md:
                 data['metadata']['request_id'] = md['request_id']
             if 'activity' in md:
@@ -115,10 +115,10 @@ def eventCreator():
         q.task_done()
 
         if len(aLotOfData) > 500:
-            succ = tools.bulk_index(aLotOfData, es_conn=es_conn, thread_name=threading.current_thread().name)
+            succ = tools.bulk_index(aLotOfData, es_conn=es_conn,
+                                    thread_name=threading.current_thread().name)
             if succ is True:
                 aLotOfData = []
-
 
 
 # start eventCreator threads

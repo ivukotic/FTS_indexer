@@ -18,10 +18,10 @@ class ActiveMqListener(stomp.ConnectionListener):
         self.id = str(uuid.uuid4())
         self.user = user
         self.password = password
-        self.connection = stomp.Connection([(host, port)], use_ssl=False)
+        self.connection = stomp.Connection([(host, port)])
         self.connection.set_listener('MessagingListener', self)
         self.connection.start()
-        self.connection.connect(self.user, self.password, wait=False)
+        self.connection.connect(self.user, self.password, wait=True)
         self.topic = topic
         self.callback = callback
 
