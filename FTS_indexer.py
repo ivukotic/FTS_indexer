@@ -45,7 +45,7 @@ def eventCreator():
     while True:
         m = q.get()
         # print(m)
-        dati = datetime.fromtimestamp(float(m['tr_timestamp_start']) / 1000, timezone.UTC)
+        dati = datetime.fromtimestamp(float(m['tr_timestamp_start']) / 1000, timezone.utc)
         data = {
             '_type': 'docs',
             '_id': m['tr_id'],
