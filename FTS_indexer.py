@@ -45,11 +45,11 @@ def eventCreator():
     while True:
         m = q.get()
         # print(m)
-        dati = datetime.utcfromtimestamp(float(m['tr_timestamp_start']) / 1000)
+        dati = datetime.fromtimestamp(float(m['tr_timestamp_start']) / 1000, datetime.UTC)
         data = {
             '_type': 'docs',
             '_id': m['tr_id'],
-            '_index': 'fts-' + str(dati.year) + "-" + str(dati.month).zfill(2) + "-" + str(dati.day).zfill(2),
+            '_index': f'fts-{str(dati.year)}-{str(dati.month).zfill(2)}-{str(dati.day).zfill(2)}',
             'endpnt': m['endpnt'],
             'vo': m['vo'],
             "src_hostname":  m['src_hostname'],
@@ -82,26 +82,26 @@ def eventCreator():
         if m['t__error_message'] and m['t__error_message'] != '':
             data['error_message'] = m['t__error_message']
 
-        if 'file_metadata' in m and m['file_metadata'] != None and not isinstance(m['file_metadata'], int):
+        if 'file_metadata' in m and m['file_metadata'] is not None and not isinstance(m['file_metadata'], int):
             md = m['file_metadata']
             data['metadata'] = {}
 
-            if 'name' in md and md['name'] != None:
+            if 'name' in md and md['name'] is not None:
                 data['metadata']['name'] = md['name']
 
-            if 'scope' in md and md['scope'] != None:
+            if 'scope' in md and md['scope'] is not None:
                 data['metadata']['scope'] = md['scope']
 
-            if 'src_type' in md and md['src_type'] != None:
+            if 'src_type' in md and md['src_type'] is not None:
                 data['metadata']['src_type'] = md['src_type']
-            if 'dst_type' in md and md['dst_type'] != None:
+            if 'dst_type' in md and md['dst_type'] is not None:
                 data['metadata']['dst_type'] = md['dst_type']
-            if 'src_rse' in md and md['src_rse'] != None:
+            if 'src_rse' in md and md['src_rse'] is not None:
                 data['metadata']['src_rse'] = md['src_rse']
                 # so = siteMapping.get_site_from_ddm(md['src_rse'])
                 # if so is not None:
                 #     data['metadata']['src_site'] = so
-            if 'dst_rse' in md and md['dst_rse'] != None:
+            if 'dst_rse' in md and md['dst_rse'] is not None:
                 data['metadata']['dst_rse'] = md['dst_rse']
                 # de = siteMapping.get_site_from_ddm(md['dst_rse'])
                 # if de is not None:

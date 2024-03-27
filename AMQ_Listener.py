@@ -20,7 +20,7 @@ class ActiveMqListener(stomp.ConnectionListener):
         self.password = password
         self.connection = stomp.Connection([(host, port)])
         self.connection.set_listener('MessagingListener', self)
-        self.connection.start()
+        # self.connection.start()
         self.connection.connect(self.user, self.password, wait=True)
         self.topic = topic
         self.callback = callback
@@ -47,8 +47,8 @@ class ActiveMqListener(stomp.ConnectionListener):
         self.connection.start()
         self.connection.connect(self.user, self.password, wait=False)
 
-    def on_message(self, headers, message):
-        message = message[:-1]  # Skip EOT
+    def on_message(self, frame):
+        message = frame.body[:-1]  # Skip EOT
         try:
             content = json.loads(message)
             self.callback(content)
