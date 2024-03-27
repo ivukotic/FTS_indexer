@@ -26,13 +26,13 @@ class ActiveMqListener(stomp.ConnectionListener):
         self.callback = callback
 
     def on_connecting(self, host_and_port):
-        log.debug('ActiveMQ connected socket to %s' % str(host_and_port))
+        log.debug(f'ActiveMQ connected socket to {str(host_and_port)}')
 
-    def on_connected(self, headers, body):
-        log.info('ActiveMQ connected %s' % headers)
+    def on_connected(self, frame):
+        log.info(f'ActiveMQ connected {frame.body}')
         self.connection.subscribe(
             destination=self.topic,
-            id='activemq-listener-%s' % self.id,
+            id=f'activemq-listener-{self.id}',
             ack='auto',
             headers={"durable": True, "auto-delete": False}
         )
@@ -57,5 +57,5 @@ class ActiveMqListener(stomp.ConnectionListener):
             log.warning(message)
             raise
 
-    def on_error(self, headers, body):
-        log.error('ActiveMQ error: %s' % body)
+    def on_error(self, frame):
+        log.error(f'ActiveMQ error: {frame.body}')
