@@ -6,7 +6,7 @@ import time
 import threading
 from threading import Thread
 import copy
-from datetime import datetime
+from datetime import datetime, timezone
 
 import tools
 from AMQ_Listener import ActiveMqListener
@@ -45,7 +45,7 @@ def eventCreator():
     while True:
         m = q.get()
         # print(m)
-        dati = datetime.fromtimestamp(float(m['tr_timestamp_start']) / 1000, datetime.UTC)
+        dati = datetime.fromtimestamp(float(m['tr_timestamp_start']) / 1000, timezone.UTC)
         data = {
             '_type': 'docs',
             '_id': m['tr_id'],
