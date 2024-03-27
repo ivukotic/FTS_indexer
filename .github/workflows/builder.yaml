@@ -15,7 +15,7 @@ jobs:
       - name: Docker Build & Push Action
         uses: mr-smithers-excellent/docker-build-push@v6.3
         with:
-          image: atlasanalyticsservice/fts_indexer
+          image: ivukotic/fts_indexer
           dockerfile: Dockerfile
           tags: latest, ${{ github.sha }}
           registry: docker.io
