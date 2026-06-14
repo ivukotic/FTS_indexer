@@ -16,4 +16,4 @@ Optional:
 * ES_PASS
 * ES_HOST
 
-NB: for ATLAS Analytics this collector runs at UofC k8s cluster in aaas namespace or CERN k8s in default namespace.
+NB: for ATLAS Analytics this collector runs at UofC River k8s cluster in "collectors" namespace.

@@ -20,9 +20,13 @@ topic = "/topic/transfer.fts_monitoring_complete"
 MQ_parameters = tools.get_MQ_connection_parameters()
 
 q = queue.Queue()
+_last_message_time = time.time()
+_listeners = []
 
 
 def inserter(message):
+    global _last_message_time
+    _last_message_time = time.time()
     q.put(message)
 
 
@@ -36,7 +40,9 @@ for a in socket.getaddrinfo(MQ_parameters['MQ_HOST'], PORT):
 for ip in ips:
     if ip.count(':') > 0:
         continue
-    ActiveMqListener(ip, PORT, topic, inserter, MQ_parameters['MQ_USER'], MQ_parameters['MQ_PASS'])
+    _listeners.append(
+        ActiveMqListener(ip, PORT, topic, inserter, MQ_parameters['MQ_USER'], MQ_parameters['MQ_PASS'])
+    )
 
 
 def eventCreator():
@@ -127,6 +133,17 @@ for i in range(1):
     t.start()
 
 
+_SILENCE_THRESHOLD = 600  # seconds — treat as stale if no message received for 10 min
+
 while True:
     time.sleep(55)
-    print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "qsize:", q.qsize())
+    now = datetime.now()
+    silent_for = time.time() - _last_message_time
+    print(now.strftime("%Y-%m-%d %H:%M:%S"), "qsize:", q.qsize(), f"| last msg: {int(silent_for)}s ago")
+    if silent_for > _SILENCE_THRESHOLD:
+        print(now.strftime("%Y-%m-%d %H:%M:%S"), "WARNING: no messages for", int(silent_for), "s — forcing reconnect")
+        for listener in _listeners:
+            try:
+                listener.connection.disconnect()
+            except Exception:
+                pass
