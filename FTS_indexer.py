@@ -19,7 +19,7 @@ topic = "/queue/Consumer.ftsucanalytics.transfer.fts_monitoring_complete"
 # siteMapping.reload()
 MQ_parameters = tools.get_MQ_connection_parameters()
 
-q = queue.Queue()
+q = queue.Queue(maxsize=5000)
 _last_message_time = time.time()
 _listeners = []
 
@@ -120,10 +120,9 @@ def eventCreator():
         q.task_done()
 
         if len(aLotOfData) > 500:
-            succ = tools.bulk_index(aLotOfData, es_conn=es_conn,
-                                    thread_name=threading.current_thread().name)
-            if succ is True:
-                aLotOfData = []
+            tools.bulk_index(aLotOfData, es_conn=es_conn,
+                             thread_name=threading.current_thread().name)
+            aLotOfData = []
 
 
 # start eventCreator threads
