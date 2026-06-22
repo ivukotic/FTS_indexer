@@ -14,7 +14,7 @@ from AMQ_Listener import ActiveMqListener
 
 # topic = "/topic/transfer.fts_monitoring_state"
 # topic = "/topic/transfer.fts_monitoring_start"
-topic = "/topic/transfer.fts_monitoring_complete"
+topic = "/queue/Consumer.ftsucanalytics.transfer.fts_monitoring_complete"
 
 # siteMapping.reload()
 MQ_parameters = tools.get_MQ_connection_parameters()
