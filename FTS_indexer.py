@@ -6,6 +6,7 @@ import time
 import threading
 from threading import Thread
 import copy
+import logging
 from datetime import datetime, timezone
 
 import tools
@@ -15,6 +16,11 @@ from AMQ_Listener import ActiveMqListener
 # topic = "/topic/transfer.fts_monitoring_state"
 # topic = "/topic/transfer.fts_monitoring_start"
 topic = "/queue/Consumer.ftsucanalytics.transfer.fts_monitoring_complete"
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(name)s [%(threadName)s] %(message)s',
+)
 
 # siteMapping.reload()
 MQ_parameters = tools.get_MQ_connection_parameters()

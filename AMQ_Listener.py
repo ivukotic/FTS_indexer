@@ -20,17 +20,20 @@ class ActiveMqListener(stomp.ConnectionListener):
         Constructor
         """
         self.id = str(uuid.uuid4())
+        self.host_and_port = f'{host}:{port}'
+        self._last_error = None  # most recent broker ERROR frame text
         self.user = user
         self.password = password
         self._reconnect_lock = threading.Lock()
         # heartbeats=(send_ms, recv_ms) — broker must reply within recv_ms
         # or the stomp library fires on_heartbeat_timeout automatically.
-        # reconnect_attempts_max=0 disables stomp.py's own built-in
-        # auto-reconnect thread; otherwise it races with _reconnect() below
-        # and both send a CONNECT frame on the same socket, which the broker
-        # rejects as a duplicate CONNECT and kills the connection.
+        # reconnect_attempts_max is the number of socket-open attempts stomp.py
+        # makes inside a single connect() call (not a background thread).
+        # It must be >= 1: with 0 the socket loop never runs and connect()
+        # immediately raises an empty ConnectFailedException. We use 1 so
+        # retry/backoff is owned entirely by _reconnect() below.
         self.connection = stomp.Connection(
-            [(host, port)], heartbeats=(4000, 4000), reconnect_attempts_max=0
+            [(host, port)], heartbeats=(4000, 4000), reconnect_attempts_max=1
         )
         self.connection.set_listener('MessagingListener', self)
         self.topic = topic
@@ -79,17 +82,31 @@ class ActiveMqListener(stomp.ConnectionListener):
             attempt = 0
             while True:
                 attempt += 1
+                self._last_error = None
                 try:
-                    log.info(f'Reconnect attempt {attempt}...')
+                    log.info(
+                        f'Connect attempt {attempt} to {self.host_and_port} '
+                        f'as user {self.user!r}...'
+                    )
                     self.connection.connect(
                         self.user, self.password, wait=True
                     )
                     return
                 except Exception as e:
+                    # stomp.py's ConnectFailedException has an empty message;
+                    # the real reason is in the broker's ERROR frame (captured
+                    # in on_error) or in the exception's cause/type.
+                    reason = str(e) or repr(e)
+                    if e.__cause__ or e.__context__:
+                        reason += f' (caused by {e.__cause__ or e.__context__!r})'
+                    if self._last_error:
+                        reason += f' | broker said: {self._last_error}'
                     log.warning(
-                        f'Reconnect attempt {attempt} failed: {e}. '
+                        f'Connect attempt {attempt} to {self.host_and_port} '
+                        f'failed: {type(e).__name__}: {reason}. '
                         f'Retry in {delay}s...'
                     )
+                    log.debug('Connect failure traceback', exc_info=True)
                     time.sleep(delay)
                     delay = min(delay * 2, _RECONNECT_DELAY_MAX)
         finally:
@@ -108,4 +125,13 @@ class ActiveMqListener(stomp.ConnectionListener):
             raise
 
     def on_error(self, frame):
-        log.error(f'ActiveMQ error: {frame.body}')
+        # Brokers usually put the reason (e.g. auth failure) in the 'message'
+        # header; the body is often empty or holds extra details.
+        headers = frame.headers or {}
+        msg = headers.get('message', '')
+        body = (frame.body or '').strip()
+        self._last_error = ' '.join(p for p in (msg, body) if p) or str(headers)
+        log.error(
+            f'ActiveMQ error from {self.host_and_port}: {self._last_error} '
+            f'(headers={headers})'
+        )
